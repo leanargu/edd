@@ -1,54 +1,68 @@
-# Diccionarios KV
-
-## Funciones basicas
-- Constructor
-- get("key")
-- insert("key", "value") -> Inmutable. No cambia el *value*
-- ["key"] -> Mutable, si se pasa una key con el operador de llaves si se puede cambiar el *value*
-- remove("key")
-- contains("key")
-
-## Caracteristicas
-- Clave valor [key,value]
-- Claves únicas
-
-## Hashing
-- Como puedo guardar elementos para encontrarlos de forma eficiente? No por posición(como en una lista), sino por elemento.
-- Dato -> Función Hash(dato) -> Memoria
-- Dato -> Función Hash(dato) -> Memoria
+# Diccionarios (Mapas) - Guía Visual (Clase 9)
 
 > [!NOTE]
+> **Dashboard de Repaso:** ¡Tema seguro de Parcial 2! Suele tomarse un ejercicio de agrupar o clasificar datos en un diccionario usando como valores listas o conjuntos (`sets`).
+
+## 🔑 1. Conceptos Clave
+- **Clave-Valor (K, V):** Los diccionarios almacenan datos asociados a una clave única, en lugar de una posición o índice.
+- **Claves Únicas e Inmutables:** No puede haber dos claves iguales. Además, el tipo de dato de la clave no puede modificarse (ej. podés usar `int`, `str`, o `tuplas`, pero NO `listas`).
+- **Hashing:** Es el proceso que permite buscar datos de manera ultra-rápida ($O(1)$) calculando en qué lugar de memoria va cada elemento basándose en su clave.
+
+> [!TIP]
 > **Curiosidad: Función de Hashing Realista**
-> Python utiliza internamente funciones de hash nativas optimizadas. Así se ve un hashing básico usando la función nativa `hash()`:
+> Python utiliza funciones hash nativas optimizadas. Así se ve un hashing básico usando la función nativa `hash()`:
 > ```python
-> # hash() convierte el string en un entero único (para esa sesión)
 > clave = "Lean"
-> indice_memoria = hash(clave) % 100 # % 100 limita el índice a un rango de 0-99
-> print(f"La clave '{clave}' se guardará en el índice: {indice_memoria}")
-> # Salida esperada: La clave 'Lean' se guardará en el índice: 42 (por ejemplo)
+> indice = hash(clave) % 100 # % 100 limita el índice a 0-99
+> print(f"La clave '{clave}' va al índice: {indice}")
 > ```
-> *En sistemas de criptografía (ej. contraseñas) se usan hashes más complejos como SHA-256 (`hashlib.sha256()`), los cuales siempre devuelven el mismo hash para el mismo dato.*
 
-## Conjuntos que podrian formar el TDA Diccionario
-- Set: guarda de manera constante (o1) sin repetidos utilizando una tabla de hash. Puede servir para la clave
-- Conjunto de arrays no se puede, porque son mutables
-- Conjunto de tuplas: Es lo mejor.
-  - Esta ordenada porque guarda por posición
-  - Es inmutable
-  - Ej `dic = {("c1","v1"), ("c2","v2"), ("c3","v3")}`
+---
 
-## Recorrido
+## 🛠️ 2. Operaciones Básicas del TDA Diccionario
+*Asumiendo que usamos la interfaz teórica dada en clase para TDA Diccionario:*
 
-```
-diccionario = Diccionario()
+| Operación | Descripción |
+| :--- | :--- |
+| `dic = Diccionario()` | **Constructor:** Inicializa el diccionario vacío. |
+| `dic.get(clave)` | **Obtener:** Retorna el valor asociado a la clave (o nulo si no existe). |
+| `dic.insert(clave, valor)` | **Insertar:** Agrega la dupla al diccionario. Si la clave ya existe, no la pisa (es inmutable en algunas cátedras). |
+| `dic[clave] = valor` | **Operador Llave:** Versión mutable, pisa el valor si la clave ya existe. |
+| `dic.remove(clave)` | **Eliminar:** Borra la clave y su valor asociado. |
+| `dic.contains(clave)` | **Pertenece:** Retorna `True` si la clave existe. |
+
+---
+
+## 🧩 3. Segmentación: Patrones de Ejercicios
+
+### A. Patrón de Búsqueda y Recorrido
+Para imprimir, sumar o modificar valores recorriendo el diccionario, SIEMPRE iteramos sobre las claves (`keys`).
+
+```python
+# Machete de Recorrido Estándar
 for clave in diccionario.keys():
-    print(diccionario.get(clave))
+    valor_actual = diccionario.get(clave)
+    print(f"Clave: {clave} -> Valor: {valor_actual}")
 ```
 
-## Usando conjuntos como values
+### B. Patrón de Agrupación (Listas como Valores)
+Este es el ejercicio de parcial por excelencia: Agrupar elementos que comparten una característica (ej. Palabras por longitud, Alumnos por nota).
 
-```
+```python
+# Machete: Diccionario con listas en los values
 notas = Diccionario()
-notas["Lean"].append(9)
+
+def agregar_nota_a_alumno(nombre_alumno, nueva_nota):
+    if not notas.contains(nombre_alumno):
+        notas.insert(nombre_alumno, []) # Inicializamos la lista vacía si es la primera vez
+    
+    # Agregamos a la lista existente
+    lista_actual = notas.get(nombre_alumno)
+    lista_actual.append(nueva_nota)
 ```
 
+### C. Patrón de Agrupación Única (Conjuntos/Sets como Valores)
+Si el parcial pide que en la agrupación **"no haya elementos repetidos"**, usamos un Conjunto (`Set`) en vez de una Lista.
+
+- **Set vs Lista:** `set()` guarda de manera constante sin repetidos y no tiene orden. Las listas mantienen orden de inserción y permiten repetidos.
+- **Tuplas:** Son la alternativa ideal para claves compuestas (ej. `(nombre, apellido)`) porque son inmutables.

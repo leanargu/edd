@@ -124,3 +124,56 @@ def promedio_edades(vector):
 2.  **¿Validé `is not None`?** (Cualquier objeto en un arreglo/matriz puede ser nulo).
 3.  **¿Validé los límites?** (Si recibís `f` o `c`, chequealos contra `shape`).
 4.  **¿Usé métodos del objeto?** (Evitá `obj.__atributo`, usá `obj.get_atributo()`).
+
+---
+
+## 🌳 6. TDA, Listas Enlazadas y Árboles (Parcial 2)
+
+### A. Listas Enlazadas: El Peligro del Bucle Infinito
+Siempre, pero **siempre**, asegurate de avanzar tu puntero (`aux = aux.siguiente`) dentro de un `while`. 
+*Cuidado al insertar nodos:* Si insertás un nodo y no lo saltás, en la próxima vuelta podrías volver a evaluarlo y entrar en un bucle infinito creando nodos sin parar.
+```python
+while aux.tiene_siguiente():
+    if condicion:
+        # 1. Crear nodo y engancharlo
+        # 2. AVANZAR SALTEANDO EL NUEVO NODO
+        aux = aux.siguiente.siguiente
+    else:
+        # Avanzar normal
+        aux = aux.siguiente
+```
+
+### B. Árboles (ABB): Recursividad Limpia (Método en el Nodo)
+En tu cursada aprendieron a resolver la recursividad creando un método en el Árbol que delega todo el trabajo a un método homónimo en el **Nodo**. 
+¡Seguí esa misma estructura en el parcial para no fallar!
+
+1. **Método en el Árbol (ABB):** Solo chequea si está vacío y llama a la raíz.
+```python
+def mi_metodo(self, params):
+    if self.estaVacio():
+        return 0 # o el valor base correspondiente
+    return self.__raiz.mi_metodo(params)
+```
+
+2. **Método en el Nodo (`__NodoArbol`):** Toda la lógica recursiva y chequeo de hijos.
+```python
+def mi_metodo(self, params):
+    resultado = ... # sumar mi propio dato si corresponde
+    
+    if self.tieneIzquierdo():
+        resultado += self.izquierdo.mi_metodo(params)
+    if self.tieneDerecho():
+        resultado += self.derecho.mi_metodo(params)
+        
+    return resultado
+```
+
+### C. Diccionarios: Intersección vs Unión
+- **Unión:** Sumar TODAS las claves de ambos diccionarios.
+- **Intersección:** Sumar **SÓLO** las claves que comparten (están en el Diccionario 1 **Y** en el Diccionario 2). ¡No agregues claves que solo están en uno de los dos!
+
+### D. Encapsulamiento en el Parcial (Papel)
+Recordá que en el papel no hace falta pelear con el *name mangling* de Python. Accedés a los atributos privados de las clases usando sus dos guiones bajos de forma natural:
+- Lista: `self.__primero`
+- Árbol: `self.__raiz`
+- Instanciar un nodo de lista: `self.__NodoLista(dato)`
